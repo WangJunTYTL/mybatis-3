@@ -95,22 +95,22 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public class Configuration {
 
-  protected Environment environment;
+  protected Environment environment; // 数据源、事务工厂
 
   protected boolean safeRowBoundsEnabled = false;
   protected boolean safeResultHandlerEnabled = true;
-  protected boolean mapUnderscoreToCamelCase = false;
+  protected boolean mapUnderscoreToCamelCase = false; // 下划线转驼峰
   protected boolean aggressiveLazyLoading = true;
   protected boolean multipleResultSetsEnabled = true;
   protected boolean useGeneratedKeys = false;
   protected boolean useColumnLabel = true;
-  protected boolean cacheEnabled = true;
+  protected boolean cacheEnabled = true; // 是否支持缓存
   protected boolean callSettersOnNulls = false;
 
-  protected String logPrefix;
-  protected Class <? extends Log> logImpl;
+  protected String logPrefix;  // log的name上会加上该前缀
+  protected Class <? extends Log> logImpl; // 使用log实现
   protected Class <? extends VFS> vfsImpl;
-  protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+  protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION; // 缓存有效范围 session内有效
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
   protected Set<String> lazyLoadTriggerMethods = new HashSet<String>(Arrays.asList(new String[] { "equals", "clone", "hashCode", "toString" }));
   protected Integer defaultStatementTimeout;
@@ -136,7 +136,7 @@ public class Configuration {
    */
   protected Class<?> configurationFactory;
 
-  protected final InterceptorChain interceptorChain = new InterceptorChain();
+  protected final InterceptorChain interceptorChain = new InterceptorChain(); // 所有的interceptor，利用jdk的proxy实现
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
@@ -506,7 +506,7 @@ public class Configuration {
 
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-    statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
+    statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler); // 代理处理
     return statementHandler;
   }
 
@@ -514,6 +514,12 @@ public class Configuration {
     return newExecutor(transaction, defaultExecutorType);
   }
 
+  /**
+   * 创建executor实例
+   * @param transaction
+   * @param executorType
+   * @return
+   */
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
     executorType = executorType == null ? defaultExecutorType : executorType;
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
@@ -526,7 +532,7 @@ public class Configuration {
       executor = new SimpleExecutor(this, transaction);
     }
     if (cacheEnabled) {
-      executor = new CachingExecutor(executor);
+      executor = new CachingExecutor(executor); // CachingExecutor 是对其它executor的一种封装
     }
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;

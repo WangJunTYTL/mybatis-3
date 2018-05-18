@@ -62,7 +62,7 @@ public interface Executor {
 
     Transaction getTransaction();
 
-    void close(boolean forceRollback);
+    void close(boolean forceRollback); // 关闭Executor
 
     boolean isClosed();
 

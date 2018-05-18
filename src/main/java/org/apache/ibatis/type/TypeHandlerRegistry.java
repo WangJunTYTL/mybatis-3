@@ -31,6 +31,7 @@ import java.util.Set;
 import org.apache.ibatis.io.ResolverUtil;
 
 /**
+ * 各种类型映射
  * @author Clinton Begin
  */
 public final class TypeHandlerRegistry {

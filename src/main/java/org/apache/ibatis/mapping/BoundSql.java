@@ -38,7 +38,7 @@ public class BoundSql {
 
   private String sql;
   private List<ParameterMapping> parameterMappings;
-  private Object parameterObject;
+  private Object parameterObject; // 当参数存在多个时，参数对象怎么表达，应该是一个集合对象？
   private Map<String, Object> additionalParameters;
   private MetaObject metaParameters;
 

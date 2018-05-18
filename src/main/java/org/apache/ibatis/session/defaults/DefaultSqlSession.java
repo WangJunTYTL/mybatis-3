@@ -40,6 +40,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 一次session会话，会创建一个session实例，同时创建一个executor实例，session关闭时对应的executor也将会关闭
  *
  * The default implementation for {@link SqlSession}.
  * Note that this class is not Thread-Safe.
@@ -144,7 +145,9 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {
+      // 一个Statement肯定对应一个方法，一个方法肯定对应一条Sql
       MappedStatement ms = configuration.getMappedStatement(statement);
+      // 执行query时，需要statement、参数、查询offset、limit、结果处理器
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
@@ -261,7 +264,7 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public void close() {
     try {
-      executor.close(isCommitOrRollbackRequired(false));
+      executor.close(isCommitOrRollbackRequired(false)); // 关闭Executor
       closeCursors();
       dirty = false;
     } finally {

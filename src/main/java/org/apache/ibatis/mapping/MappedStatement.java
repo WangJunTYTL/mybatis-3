@@ -34,8 +34,8 @@ import org.apache.ibatis.session.Configuration;
 public final class MappedStatement {
 
   private String resource;
-  private Configuration configuration;
-  private String id;
+  private Configuration configuration; // mybatis和sqlmap的配置信息
+  private String id; // 每个方法对应的id
   private Integer fetchSize;
   private Integer timeout;
   private StatementType statementType;

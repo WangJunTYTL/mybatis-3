@@ -24,12 +24,12 @@ public class ErrorContext {
   private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<ErrorContext>();
 
   private ErrorContext stored;
-  private String resource;
-  private String activity;
-  private String object;
-  private String message;
-  private String sql;
-  private Throwable cause;
+  private String resource; // 应该是对应statement
+  private String activity; // 当前进行的操作
+  private String object; // 操作对应的数据
+  private String message; // 异常信息
+  private String sql; // 具体sql
+  private Throwable cause; // 具体堆栈
 
   private ErrorContext() {
   }
@@ -44,7 +44,7 @@ public class ErrorContext {
   }
 
   public ErrorContext store() {
-    stored = this;
+    stored = this;  // 这里岂不是清除了原先的数据
     LOCAL.set(new ErrorContext());
     return LOCAL.get();
   }

@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * @author Clinton Begin
  */
-public class SimpleExecutor extends BaseExecutor {
+public class SimpleExecutor extends BaseExecutor { // BaseExecutor 实现了基本通用的代码 Simple实现具体的逻辑
 
   public SimpleExecutor(Configuration configuration, Transaction transaction) {
     super(configuration, transaction);
@@ -59,8 +59,9 @@ public class SimpleExecutor extends BaseExecutor {
     try {
       Configuration configuration = ms.getConfiguration();
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+      // 查询操作 打开PrepareStatement对象，这里已是原生的JDBC的Api，这里会拿到Connection对象然后获取PrepareStatement
       stmt = prepareStatement(handler, ms.getStatementLog());
-      return handler.<E>query(stmt, resultHandler);
+      return handler.<E>query(stmt, resultHandler); // 处理结果返回给Executor
     } finally {
       closeStatement(stmt);
     }

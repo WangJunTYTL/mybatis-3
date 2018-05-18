@@ -65,6 +65,7 @@ public class SelectKeyGenerator implements KeyGenerator {
           // Do not close keyExecutor.
           // The transaction will be closed by parent executor.
           Executor keyExecutor = configuration.newExecutor(executor.getTransaction(), ExecutorType.SIMPLE);
+          // 这里应该又把结果查询出来了 但为什么查询的结果可以作为key ？
           List<Object> values = keyExecutor.query(keyStatement, parameter, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER);
           if (values.size() == 0) {
             throw new ExecutorException("SelectKey returned no data.");            

@@ -20,4 +20,6 @@ package org.apache.ibatis.session;
  */
 public enum LocalCacheScope {
   SESSION,STATEMENT
+
+//  Session: 缓存的作用范围是Session打开到关闭，关闭后cache会被清理
 }

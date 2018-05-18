@@ -70,7 +70,7 @@ public class JdbcTransaction implements Transaction {
       if (log.isDebugEnabled()) {
         log.debug("Committing JDBC Connection [" + connection + "]");
       }
-      connection.commit();
+      connection.commit(); // 提交事务
     }
   }
 

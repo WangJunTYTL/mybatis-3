@@ -25,7 +25,7 @@ import org.apache.ibatis.cache.CacheException;
 /**
  * @author Clinton Begin
  */
-public class PerpetualCache implements Cache {
+public class PerpetualCache implements Cache { // 永久缓存 实现方式是把数据放入到一个HashMap对象
 
   private String id;
 

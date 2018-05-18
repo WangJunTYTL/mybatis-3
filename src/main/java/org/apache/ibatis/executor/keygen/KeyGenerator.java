@@ -21,6 +21,11 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 
 /**
+ * 主键生成 mysql服务端提供的主键生成有几种策略
+ * 1，一次会话 即在同一个Connection下，SELECT LAST_INSERT_ID()返回
+ * 的一直是当前连接下的最大的主键id，其它Connection的插入不会影响当前的id返回值
+ * 2. JDBC 3.0 驱动实现里直接返回了主键信息
+ *
  * @author Clinton Begin
  */
 public interface KeyGenerator {

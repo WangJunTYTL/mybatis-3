@@ -32,7 +32,7 @@ import org.apache.ibatis.session.RowBounds;
 /**
  * @author Clinton Begin
  */
-public class RoutingStatementHandler implements StatementHandler {
+public class RoutingStatementHandler implements StatementHandler { // 根据构造参数返回不同的具体StatementHandler
 
   private final StatementHandler delegate;
 

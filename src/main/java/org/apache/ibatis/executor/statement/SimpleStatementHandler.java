@@ -53,10 +53,10 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     } else if (keyGenerator instanceof SelectKeyGenerator) {
       statement.execute(sql);
       rows = statement.getUpdateCount();
-      keyGenerator.processAfter(executor, mappedStatement, statement, parameterObject);
+      keyGenerator.processAfter(executor, mappedStatement, statement, parameterObject); // 可能主键也会被更新，所以需要检查主键信息
     } else {
       statement.execute(sql);
-      rows = statement.getUpdateCount();
+      rows = statement.getUpdateCount(); // 返回更新的行数
     }
     return rows;
   }
@@ -71,7 +71,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
   public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
     String sql = boundSql.getSql();
     statement.execute(sql);
-    return resultSetHandler.<E>handleResultSets(statement);
+    return resultSetHandler.<E>handleResultSets(statement); // 结果集由专门的处理工具类处理
   }
 
   @Override

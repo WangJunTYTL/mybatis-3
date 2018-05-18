@@ -38,17 +38,17 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public abstract class BaseStatementHandler implements StatementHandler {
 
-  protected final Configuration configuration;
+  protected final Configuration configuration; // mybatis 全局对象
   protected final ObjectFactory objectFactory;
-  protected final TypeHandlerRegistry typeHandlerRegistry;
-  protected final ResultSetHandler resultSetHandler;
-  protected final ParameterHandler parameterHandler;
+  protected final TypeHandlerRegistry typeHandlerRegistry; // 类型处理注册
+  protected final ResultSetHandler resultSetHandler; // 结果处理
+  protected final ParameterHandler parameterHandler; // 参数处理
 
-  protected final Executor executor;
-  protected final MappedStatement mappedStatement;
+  protected final Executor executor; // 执行mappedStatement的executor
+  protected final MappedStatement mappedStatement; // 具体的sql信息
   protected final RowBounds rowBounds;
 
-  protected BoundSql boundSql;
+  protected BoundSql boundSql; // sql 定义
 
   protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     this.configuration = mappedStatement.getConfiguration();
@@ -57,7 +57,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
     this.rowBounds = rowBounds;
 
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-    this.objectFactory = configuration.getObjectFactory();
+    this.objectFactory = configuration.getObjectFactory();  // 创建bean的Factory
 
     if (boundSql == null) { // issue #435, get the key before calculating the statement
       generateKeys(parameterObject);
@@ -86,8 +86,8 @@ public abstract class BaseStatementHandler implements StatementHandler {
     Statement statement = null;
     try {
       statement = instantiateStatement(connection);
-      setStatementTimeout(statement);
-      setFetchSize(statement);
+      setStatementTimeout(statement); // 设置statement执行超时时间
+      setFetchSize(statement); // 设置ResultSet大小
       return statement;
     } catch (SQLException e) {
       closeStatement(statement);

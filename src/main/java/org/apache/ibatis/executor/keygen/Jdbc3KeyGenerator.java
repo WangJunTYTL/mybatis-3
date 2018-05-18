@@ -48,7 +48,7 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
   public void processBatch(MappedStatement ms, Statement stmt, Collection<Object> parameters) {
     ResultSet rs = null;
     try {
-      rs = stmt.getGeneratedKeys();
+      rs = stmt.getGeneratedKeys(); // 返回主键
       final Configuration configuration = ms.getConfiguration();
       final TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
       final String[] keyProperties = ms.getKeyProperties();

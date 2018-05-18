@@ -50,21 +50,21 @@ public abstract class BaseExecutor implements Executor {
 
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
-  protected Transaction transaction;
-  protected Executor wrapper;
+  protected Transaction transaction; // 事务对象 可以从事务对象获取Connection对象，也可以进行commit rollback
+  protected Executor wrapper; // BaseExecutor 某些逻辑会在调用其它的Executor
 
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
-  protected PerpetualCache localCache;
+  protected PerpetualCache localCache; // 缓存有二级缓存 也叫statement缓存  一级缓存也叫Session级缓存  这里应该是哪级缓存？
   protected PerpetualCache localOutputParameterCache;
-  protected Configuration configuration;
+  protected Configuration configuration; // mybatis全局配置信息
 
-  protected int queryStack = 0;
-  private boolean closed;
+  protected int queryStack = 0; // Executor 执行堆栈深度
+  private boolean closed; // executor 可以关闭 为什么可以关闭？
 
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
     this.transaction = transaction;
     this.deferredLoads = new ConcurrentLinkedQueue<DeferredLoad>();
-    this.localCache = new PerpetualCache("LocalCache");
+    this.localCache = new PerpetualCache("LocalCache");  // 基于Session级别的cache
     this.localOutputParameterCache = new PerpetualCache("LocalOutputParameterCache");
     this.closed = false;
     this.configuration = configuration;
@@ -95,7 +95,7 @@ public abstract class BaseExecutor implements Executor {
     } finally {
       transaction = null;
       deferredLoads = null;
-      localCache = null;
+      localCache = null; // 清除缓存，close方法会在SqlSession的close方法调用时被调用
       localOutputParameterCache = null;
       closed = true;
     }
@@ -112,7 +112,7 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
-    clearLocalCache();
+    clearLocalCache(); // 清除所有缓存数据 这里缓存的数据应该是什么
     return doUpdate(ms, parameter);
   }
 
@@ -125,13 +125,14 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
-    return doFlushStatements(isRollBack);
+    return doFlushStatements(isRollBack); // 没有实现
   }
 
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+    // 由Statement和params得到BoundSql对象，或者这里是在构造sql
     BoundSql boundSql = ms.getBoundSql(parameter);
-    // 设置缓存
+    // 设置缓存key，通过该key可以判定操作是否可以走缓存
     CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
  }
@@ -139,11 +140,11 @@ public abstract class BaseExecutor implements Executor {
   @SuppressWarnings("unchecked")
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
-    ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
+    ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId()); // 记录log
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
-    if (queryStack == 0 && ms.isFlushCacheRequired()) {
+    if (queryStack == 0 && ms.isFlushCacheRequired()) { // ms配置是否需要清除缓存 而且当Executor的深度是0时
       clearLocalCache();
     }
     List<E> list;
@@ -155,6 +156,7 @@ public abstract class BaseExecutor implements Executor {
       if (list != null) {
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
       } else {
+        // 不存在缓存则会从db中查询，且查询后会把结果存入到缓存
         list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
       }
     } finally {
@@ -325,6 +327,7 @@ public abstract class BaseExecutor implements Executor {
     } finally {
       localCache.removeObject(key);
     }
+    // 查询完数据库后需要把结果放入到本地缓存
     localCache.putObject(key, list);
     if (ms.getStatementType() == StatementType.CALLABLE) {
       localOutputParameterCache.putObject(key, parameter);
@@ -335,6 +338,7 @@ public abstract class BaseExecutor implements Executor {
   protected Connection getConnection(Log statementLog) throws SQLException {
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {
+      // 采用JDK代理的方式，记录Connection的每个方法执行
       return ConnectionLogger.newInstance(connection, statementLog, queryStack);
     } else {
       return connection;

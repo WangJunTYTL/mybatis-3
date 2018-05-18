@@ -28,9 +28,9 @@ import org.apache.ibatis.session.ResultHandler;
 /**
  * @author Clinton Begin
  */
-public interface StatementHandler {
+public interface StatementHandler {  // sql语句最终的执行需要有Statement对象来执行
 
-  Statement prepare(Connection connection)
+  Statement prepare(Connection connection) // 返回Statement对象
       throws SQLException;
 
   void parameterize(Statement statement)
