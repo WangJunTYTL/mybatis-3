@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2016 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.apache.ibatis.session.ResultHandler;
  */
 public interface StatementHandler {  // sql语句最终的执行需要有Statement对象来执行
 
-  Statement prepare(Connection connection) // 返回Statement对象
+  Statement prepare(Connection connection, Integer transactionTimeout) // 返回Statement对象
       throws SQLException;
 
   void parameterize(Statement statement)
