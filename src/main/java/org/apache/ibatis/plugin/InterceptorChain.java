@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ public class InterceptorChain {
   private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
   public Object pluginAll(Object target) {
+    // 生成通过Proxy代理后的target实例，不是原始的实例
     for (Interceptor interceptor : interceptors) {
       target = interceptor.plugin(target);
     }

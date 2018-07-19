@@ -107,7 +107,7 @@ public class DefaultCursor<T> implements Cursor<T> {
             return;
         }
 
-        ResultSet rs = rsw.getResultSet();
+        ResultSet rs = rsw.getResultSet(); // Jdbc ResultSet 对象
         try {
             if (rs != null) {
                 Statement statement = rs.getStatement();

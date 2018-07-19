@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.apache.ibatis.session.SqlSession;
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
   private static final long serialVersionUID = -6424540398559729838L;
-  private final SqlSession sqlSession;
+  private final SqlSession sqlSession; // mapper代理实例执行过程中所用的sqlSession
   private final Class<T> mapperInterface;
   private final Map<Method, MapperMethod> methodCache;
 
@@ -56,7 +56,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
       throw ExceptionUtil.unwrapThrowable(t);
     }
     final MapperMethod mapperMethod = cachedMapperMethod(method);
-    return mapperMethod.execute(sqlSession, args);
+    return mapperMethod.execute(sqlSession, args); // mapper 接口调用时真正执行的方法
   }
 
   private MapperMethod cachedMapperMethod(Method method) {

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import java.util.Properties;
  */
 public interface Interceptor {
 
-  Object intercept(Invocation invocation) throws Throwable;
+  Object intercept(Invocation invocation) throws Throwable; // 这里是对target生成代理类后，可以在代理类中调用该函数，你也可以不使用该方法
 
-  Object plugin(Object target);
+  Object plugin(Object target); // plugin可以操作的target，当前是Executor、ParameterHandler、StatementHandler、ResultSetHandler
 
-  void setProperties(Properties properties);
+  void setProperties(Properties properties); // 如果interceptor需要配置
 
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 生成Mapper的代理实例
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -42,7 +44,7 @@ public class MapperRegistry {
 
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-    final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+    final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type); // 采用单例，只生成一次代理实例
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
@@ -52,7 +54,7 @@ public class MapperRegistry {
       throw new BindingException("Error getting mapper instance. Cause: " + e, e);
     }
   }
-  
+
   public <T> boolean hasMapper(Class<T> type) {
     return knownMappers.containsKey(type);
   }
@@ -104,5 +106,5 @@ public class MapperRegistry {
   public void addMappers(String packageName) {
     addMappers(packageName, Object.class);
   }
-  
+
 }

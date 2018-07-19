@@ -151,7 +151,7 @@ public class Configuration {
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<ParameterMap>("Parameter Maps collection");
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<KeyGenerator>("Key Generators collection");
 
-  protected final Set<String> loadedResources = new HashSet<String>();
+  protected final Set<String> loadedResources = new HashSet<String>(); // 载入Mapper文件配置
   protected final Map<String, XNode> sqlFragments = new StrictMap<XNode>("XML fragments parsed from previous mappers");
 
   protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<XMLStatementBuilder>();
@@ -584,6 +584,7 @@ public class Configuration {
     if (cacheEnabled) {
       executor = new CachingExecutor(executor); // CachingExecutor 是对其它executor的一种封装
     }
+    // 该对象是通过Jdk代理过的对象
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

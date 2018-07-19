@@ -110,7 +110,7 @@ public class MapperAnnotationBuilder {
     SQL_ANNOTATION_TYPES.add(Update.class);
     SQL_ANNOTATION_TYPES.add(Delete.class);
 
-    SQL_PROVIDER_ANNOTATION_TYPES.add(SelectProvider.class);
+    SQL_PROVIDER_ANNOTATION_TYPES.add(SelectProvider.class); // 通过对象返回需要执行的Sql
     SQL_PROVIDER_ANNOTATION_TYPES.add(InsertProvider.class);
     SQL_PROVIDER_ANNOTATION_TYPES.add(UpdateProvider.class);
     SQL_PROVIDER_ANNOTATION_TYPES.add(DeleteProvider.class);
@@ -126,17 +126,17 @@ public class MapperAnnotationBuilder {
   public void parse() {
     String resource = type.toString();
     if (!configuration.isResourceLoaded(resource)) {
-      loadXmlResource();
+      loadXmlResource(); // 载入对应的SqlMap.xml 文件
       configuration.addLoadedResource(resource);
-      assistant.setCurrentNamespace(type.getName());
-      parseCache();
-      parseCacheRef();
+      assistant.setCurrentNamespace(type.getName()); // Mapper 的 Namespace ，这里是取对应类的全名称
+      parseCache(); // 二级缓存配置
+      parseCacheRef();  // ?
       Method[] methods = type.getMethods();
       for (Method method : methods) {
         try {
           // issue #237
           if (!method.isBridge()) {
-            parseStatement(method);
+            parseStatement(method); // 解析方法上的注解配置，生成对应的MapperStatement
           }
         } catch (IncompleteElementException e) {
           configuration.addIncompleteMethod(new MethodResolver(this, method));
@@ -291,7 +291,7 @@ public class MapperAnnotationBuilder {
   void parseStatement(Method method) {
     Class<?> parameterTypeClass = getParameterType(method);
     LanguageDriver languageDriver = getLanguageDriver(method);
-    SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
+    SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver); // 解析Sql
     if (sqlSource != null) {
       Options options = method.getAnnotation(Options.class);
       final String mappedStatementId = type.getName() + "." + method.getName();
@@ -472,7 +472,7 @@ public class MapperAnnotationBuilder {
           throw new BindingException("You cannot supply both a static SQL and SqlProvider to method named " + method.getName());
         }
         Annotation sqlAnnotation = method.getAnnotation(sqlAnnotationType);
-        final String[] strings = (String[]) sqlAnnotation.getClass().getMethod("value").invoke(sqlAnnotation);
+        final String[] strings = (String[]) sqlAnnotation.getClass().getMethod("value").invoke(sqlAnnotation); // 获取注解的value
         return buildSqlSourceFromStrings(strings, parameterType, languageDriver);
       } else if (sqlProviderAnnotationType != null) {
         Annotation sqlProviderAnnotation = method.getAnnotation(sqlProviderAnnotationType);
@@ -490,7 +490,7 @@ public class MapperAnnotationBuilder {
       sql.append(fragment);
       sql.append(" ");
     }
-    return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass);
+    return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass); // Sql解析
   }
 
   private SqlCommandType getSqlCommandType(Method method) {

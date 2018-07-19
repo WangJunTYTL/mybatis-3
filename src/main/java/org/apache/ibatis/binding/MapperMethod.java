@@ -38,6 +38,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
+ * 主要执行过程
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -53,12 +55,12 @@ public class MapperMethod {
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
-  public Object execute(SqlSession sqlSession, Object[] args) {
+  public Object execute(SqlSession sqlSession, Object[] args) { // CRUD操作
     Object result;
-    switch (command.getType()) {
+    switch (command.getType()) { // insert\update\delete的结果都比较容易处理，可能结果类型有Void、integer、boolean
       case INSERT: {
-    	Object param = method.convertArgsToSqlCommandParam(args);
-        result = rowCountResult(sqlSession.insert(command.getName(), param));
+    	Object param = method.convertArgsToSqlCommandParam(args); // 转换参数，如果只有一个参数就返回这个参数，如果有多个参数就转出map对象
+        result = rowCountResult(sqlSession.insert(command.getName(), param)); // 结果包装
         break;
       }
       case UPDATE: {
@@ -91,7 +93,7 @@ public class MapperMethod {
         }
         break;
       case FLUSH:
-        result = sqlSession.flushStatements();
+        result = sqlSession.flushStatements();  // TODO 这里是做什么操作？
         break;
       default:
         throw new BindingException("Unknown execution method for: " + command.getName());
@@ -217,8 +219,8 @@ public class MapperMethod {
 
   public static class SqlCommand {
 
-    private final String name;
-    private final SqlCommandType type;
+    private final String name;  // StatementId
+    private final SqlCommandType type; //Sql类型,在解析MappedStatement时，已经解析出来，比如XML的Select标签，注解里面的Select注解已说明Sql类型
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
       final String methodName = method.getName();
@@ -252,7 +254,7 @@ public class MapperMethod {
 
     private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
         Class<?> declaringClass, Configuration configuration) {
-      String statementId = mapperInterface.getName() + "." + methodName;
+      String statementId = mapperInterface.getName() + "." + methodName; // 全类名+方法名作为statementId
       if (configuration.hasStatement(statementId)) {
         return configuration.getMappedStatement(statementId);
       } else if (mapperInterface.equals(declaringClass)) {

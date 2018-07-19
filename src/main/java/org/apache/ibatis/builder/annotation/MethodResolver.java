@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
  * @author Eduardo Macarron
  */
 public class MethodResolver {
-  private final MapperAnnotationBuilder annotationBuilder;
+  private final MapperAnnotationBuilder annotationBuilder; // 解析注解配置
   private final Method method;
 
   public MethodResolver(MapperAnnotationBuilder annotationBuilder, Method method) {

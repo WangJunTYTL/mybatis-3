@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
+ * 这个类并不是Mybatis plugin的必须依赖对象，它只算是一个通用的工具类
  * @author Clinton Begin
  */
 public class Plugin implements InvocationHandler {
@@ -45,7 +46,7 @@ public class Plugin implements InvocationHandler {
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
     if (interfaces.length > 0) {
-      return Proxy.newProxyInstance(
+      return Proxy.newProxyInstance(  // 对主要对象采用Proxy代理实例，让外部开发者可以在Mybatis执行过程中嵌入自己的逻辑
           type.getClassLoader(),
           interfaces,
           new Plugin(target, interceptor, signatureMap));

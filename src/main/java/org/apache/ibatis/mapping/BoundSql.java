@@ -35,7 +35,7 @@ import org.apache.ibatis.session.Configuration;
  */
 public class BoundSql {
 
-  private final String sql;
+  private final String sql; // sql语句
   private final List<ParameterMapping> parameterMappings;
   private final Object parameterObject; // 当参数存在多个时，参数对象怎么表达，应该是一个集合对象？
   private final Map<String, Object> additionalParameters;

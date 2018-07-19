@@ -114,7 +114,7 @@ public class ParamNameResolver {
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {
       return null;
-    } else if (!hasParamAnnotation && paramCount == 1) {
+    } else if (!hasParamAnnotation && paramCount == 1) { // 如果只有一个参数时，可以不写Param注解
       return args[names.firstKey()];
     } else {
       final Map<String, Object> param = new ParamMap<Object>();
